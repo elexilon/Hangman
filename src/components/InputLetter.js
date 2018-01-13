@@ -1,22 +1,31 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import addLetter from '../actions/AddLetter'
+import PropTypes from 'prop-types'
 
 export class InputLetter extends PureComponent {
+  static propTypes = {
+    disabled: PropTypes.bool.isRequired,
+  }
+
+
   constructor(props) {
    super()
    const { letter } = props
    this.state = { letter }
   }
 
-    updateLetter(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault()
-      }
-      this.setState({
-        letter: this.refs.letter.value
-      })
+  updateLetter(event) {
+    if (event.keyCode === 13) {
+      event.preventDefault()
+      if(this.refs.letter.value === "") return
+      this.saveLetter()
+      this.refs.letter.value = ""
     }
+    this.setState({
+      letter: this.refs.letter.value,
+    })
+  }
 
   saveLetter() {
     const {
@@ -34,17 +43,16 @@ export class InputLetter extends PureComponent {
     return (
       <div className="editor">
         <input
+          autoFocus
           type="text"
           ref="letter"
           className="letter"
-          placeholder="letter"
+          placeholder="next letter?"
           defaultValue={this.props.letter}
           onChange={this.updateLetter.bind(this)}
-          onKeyDown={this.updateLetter.bind(this)} />
+          onKeyDown={this.updateLetter.bind(this)}
+          disabled = {this.props.disabled} />
 
-        <div className="actions">
-          <button className="primary" onClick={this.saveLetter.bind(this)}>Insert</button>
-        </div>
       </div>
     )
   }
