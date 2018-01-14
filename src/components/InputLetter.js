@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import addLetter from '../actions/AddLetter'
 import PropTypes from 'prop-types'
+import './InputLetter.css'
 
 export class InputLetter extends PureComponent {
   static propTypes = {

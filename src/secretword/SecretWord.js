@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-
+import './SecretWord.css';
 import InputLetter from '../components/InputLetter'
 import HangMan from '../components/HangMan'
+import WinLost from '../components/WinLost'
 
 export class SecretWord extends PureComponent {
   static propTypes = {
@@ -20,14 +21,19 @@ export class SecretWord extends PureComponent {
     else { return letter }
   }
 
-  showGuess(word, guesses) {
+  showGuess(word, guesses, isLost) {
     var arrayWord = word.split('')
-    return arrayWord.map(letter => this.machLetter(letter, guesses)).join(' ')
+    if(isLost) return <h1>{ word }</h1>
+    return <h1>{ arrayWord.map(letter => this.machLetter(letter, guesses)).join(' ') } </h1>
   }
 
   isWinner(word, guesses) {
     var arrayWord = word.split('')
     return arrayWord.map(letter => this.machLetter(letter, guesses)).join('') === word
+  }
+
+  isLost(wrongCount) {
+    return wrongCount > 5
   }
 
   solution(word) {
@@ -40,12 +46,20 @@ export class SecretWord extends PureComponent {
     const wrongCount = this.wrongGuessCount(this.props.secretword, this.props.guesses)
 
     return (
-
-      <div>
-        <HangMan errors={ wrongCount } />
-        <InputLetter disabled={ isWinner || wrongCount > 5 } />
-        <h1>{ this.showGuess(this.props.secretword, this.props.guesses) }</h1>
-        <p>{ this.props.guesses.join(' ') }</p>
+      <div className="row">
+      <br/>
+      <br/>
+        <div className="col-sm-6">
+          <br/>
+          <br/>
+          <InputLetter disabled={ isWinner || this.isLost(wrongCount) } />
+          { this.showGuess(this.props.secretword, this.props.guesses, this.isLost(wrongCount)) }
+          <p>{ this.props.guesses.join(' ') }</p>
+          <WinLost win={ isWinner } lost={ this.isLost(wrongCount) } />
+        </div>
+        <div className="col-sm-6">
+          <HangMan errors={ wrongCount } />
+        </div>
       </div>
     )
   }
